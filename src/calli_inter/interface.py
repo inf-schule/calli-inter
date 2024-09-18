@@ -2,10 +2,14 @@ import serial
 import serial.tools.list_ports as list_ports
 from time import *
 
-PID_CALLIOPE_1 = 516
-VID_CALLIOPE_1 = 3368
+PID_CALLIOPE_1_or_3 = 516
+VID_CALLIOPE_1_or_3 = 3368
 
-# TODO: Calliop 2, Calliop 3,
+PID_CALLIOPE_2 = 4133
+VID_CALLIOPE_2 = 4966
+
+# PID_CALLIOPE_3 = 516
+# VID_CALLIOPE_3 = 3368
 
 TIMEOUT = 0.1
 
@@ -16,12 +20,16 @@ def find_comport():
     ser_port.baudrate = BAUD
     ports = list(list_ports.comports())
     for p in ports:
-        try:        
-            if (p.pid == PID_CALLIOPE_1) and (p.vid == VID_CALLIOPE_1):            
+        try:
+            if (p.pid == PID_CALLIOPE_1_or_3) and (p.vid == VID_CALLIOPE_1_or_3):
+                # Calliope 1 oder Calliope 3 gefunden
                 ser_port.port = str(p.device)
                 return ser_port
             
-            # TODO: Calliope 2, Calliop 3,
+            if (p.pid == PID_CALLIOPE_2) and (p.vid == VID_CALLIOPE_2):
+                # Calliope 2 gefunden
+                ser_port.port = str(p.device)
+                return ser_port
 
         except AttributeError:
             continue
@@ -47,7 +55,7 @@ class Interface:
                 raise Exception("Calliope not found")
             self.s.open()
         
-    def write(self, value):        
+    def write(self, value):
         if (value):
             self.s.write(b'1\n')
         else:

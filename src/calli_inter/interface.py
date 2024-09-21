@@ -11,7 +11,7 @@ VID_CALLIOPE_2 = 4966
 # PID_CALLIOPE_3 = 516
 # VID_CALLIOPE_3 = 3368
 
-TIMEOUT = 0.1
+TIMEOUT = 0.2
 
 BAUD = 115200
 
@@ -40,13 +40,14 @@ def readline(s):
     char = s.read()
     val = char
     while char != b'9':
-        char = s. read()
+        char = s.read()
         val = val + char
     return val
         
-
 class Interface:
     def __init__(self, comport=False):
+        self._lastReadValue = 0
+
         if comport:
             self.s = serial.Serial(comport)
         else:
@@ -55,6 +56,8 @@ class Interface:
                 raise Exception("Calliope not found")
             self.s.open()
         
+
+
     def write(self, value):
         if (value):
             self.s.write(b'1\n')
@@ -62,12 +65,24 @@ class Interface:
             self.s.write(b'0\n')
             
     def read(self):
+        self.s.reset_input_buffer()
+
+        # Calliope zu einer Messung auffordern
         self.s.write(b't\n')
-        value = readline(self.s)        
-        if value[0] == 0x30:
-            return 0
+
+        # Antwort einlesen
+        response = self.s.read(1)
+        if len(response) == 0:
+            print('Timeout beim Lesen')
+            return self._lastReadValue
         else:
-            return 1
+            if response[0] == 0x30:
+                self._lastReadValue = 0
+                return 0
+            else:
+                self._lastReadValue = 1
+                return 1
+
 
     def close(self):
         self.s.close()

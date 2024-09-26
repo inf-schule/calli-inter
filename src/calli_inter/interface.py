@@ -65,12 +65,10 @@ class Interface:
             self.s.write(b'0\n')
             
     def read(self):
+        # Der Calliope sendet dauerhaft
+        # Input-Buffer leeren, damit der aktuelle Wert (und kein alter Wert aus dem Buffer) gelesen wird
         self.s.reset_input_buffer()
 
-        # Calliope zu einer Messung auffordern
-        self.s.write(b't\n')
-
-        # Antwort einlesen
         response = self.s.read(1)
         if len(response) == 0:
             print('Timeout beim Lesen')

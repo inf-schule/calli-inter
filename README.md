@@ -9,4 +9,4 @@ py -m build
 
 aus lokaler Datei installieren (zum Testen):
 
-py -m pip install .\dist\calli_inter-0.0.1.tar.gz
+py -m pip install .\dist\calli_inter-0.0.4.tar.gz

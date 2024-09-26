@@ -49,7 +49,7 @@ class Interface:
         self._lastReadValue = 0
 
         if comport:
-            self.s = serial.Serial(comport)
+            self.s = serial.Serial(comport, baudrate=BAUD, timeout=TIMEOUT)
         else:
             self.s = find_comport()
             if not self.s:
